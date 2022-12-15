@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Personal identity number</title>
+  </head>
+  <body>
+    <b>Check the correctness of your personal identity code:</b>
+    <br /><input type="text" id="personID" placeholder="ddmmyy-xxxn" />
+    <button type="button" onclick="function_1()">Check</button>
+    <p id="result1"></p>
+    <br>
+    <b>The control character:</b>
+    <br /><input type="text" id="personID-forCC" placeholder="ddmmyy-xxx" />
+    <button type="button" onclick="function_2()">Get</button>
+    <br>
+    <div id="result2"><br /></div>
+
+    <script>
+      function check_birthday(Personal_ID){
+        
+        
+        var isvalidinput=true;
+        var is_valid_date=false;
+        const birthday=[0,0,0];
+        if (Personal_ID[6]== "-"){
+          const data=Personal_ID.split("-");
+          var date=data[0];
+          birthday[0]=1900+Number(date[4]+date[5])
+          birthday[1]=Number(date[2]+date[3])
+          birthday[2]=Number(date[0]+date[1])
+          
+        }else if (Personal_ID[6]== "+"){
+          const data=Personal_ID.split("+");
+          var date=data[0];
+          birthday[0]=1800+Number(date[4]+date[5])
+          birthday[1]=Number(date[2]+date[3])
+          birthday[2]=Number(date[0]+date[1])
+        }else if (Personal_ID[6]== "A"){
+          const data=Personal_ID.split("A",2);
+          var date=data[0];
+          birthday[0]=2000+Number(date[4]+date[5])
+          birthday[1]=Number(date[2]+date[3])
+          birthday[2]=Number(date[0]+date[1])
+        }else{
+          document.getElementById("result1").innerHTML=("* Invalid Input value");
+          isvalidinput=false;
+
+        }
+        if (isvalidinput){
+          if (birthday[1]==2 && birthday[2]>29){
+            document.getElementById("result1").innerHTML=("* false, day or month is incorrect");
+          }else if (birthday[1]>12 && (birthday[2]>31 || birthday[2]<0) ) {
+            document.getElementById("result1").innerHTML=("* false, day or month is incorrect");
+          }else if (birthday[1]>12 || birthday[1]<0){
+            document.getElementById("result1").innerHTML=("* false, month is incorrect");
+          }else if (birthday[2]>31 || birthday[2]<0){
+            document.getElementById("result1").innerHTML=("* false, day is incorrect");
+          }else{
+            is_valid_date=true;
+
+          }
+        if (is_valid_date){
+          
+          return [Personal_ID,birthday];
+        }
+        else {
+           var wrong_value=["0","0"];
+           return wrong_value;
+          }
+        }
+        
+      }
+
+        function get_info(personID){
+          const birthday=personID[1];
+          var PersonID=personID[0];
+          
+          if (PersonID!="0"){
+          var sepcail_number=(Number(PersonID[7])*100)+(Number(PersonID[8]*10)+(Number(PersonID[9])))
+          var sex=""
+          if (sepcail_number%2==0){
+             sex="Female"
+          }else{
+             sex = "male"
+          }
+          var today_date = new Date();
+          var day= today_date.getDate();
+          var month= 1+today_date.getMonth();
+          var year= today_date.getFullYear();
+        
+          var Month=[31,28,31,30,31,30,31,31,30,31,30,31];
+
+          if (birthday[2]>day){
+            day=day+Month[month-1];
+            month=month-1;
+            
+          }
+          if (birthday[1]>month){
+            month=month+12;
+            year=year-1;
+
+          }
+          var D=day-birthday[2];
+          var M=month-birthday[1];
+          var Y=year-birthday[0];
+          
+          document.getElementById("result1").innerHTML=("* is valid: true"+"<br>"+"* sex: "+sex+"<br>"+"* age: "+Y+"<br>"+"* "+Y+" years "+M+" months "+D+" days"+" this is calculated on: "+today_date.getDate()+"/"+today_date.getMonth()+"/"+today_date.getFullYear());
+          
+        }
+      }
+      function control_character(ID){
+        var id =ID[0];
+        id=Number(id.substring(0,6)+id.substring(7,10));
+        const ch=["0","1","2","3","4","5","6","7","8","9","A","B","C","D", "E","F","H","J","K","L","M","N","P","R","S","T","U","V","W","X","Y"]
+        var Char=ch[Math.round(((id%31)))]
+        document.getElementById("result2").innerHTML=("<br>* The control character is: "+Char)
+        
+        
+
+      }
+      
+      function function_1(){
+        var Personal_ID=document.getElementById("personID").value;
+      
+        var ID= check_birthday(Personal_ID);
+        get_info(ID)
+      }
+      function function_2(){
+        var personID_forCC=document.getElementById("personID-forCC").value;
+        var ID_forCC=check_birthday(personID_forCC);
+        control_character(ID_forCC)
+
+
+      }
+
+    </script>
+
+  </body>
+</html>
